@@ -1,10 +1,19 @@
-"""Shared pytest fixtures (Redis container, client, etc.)."""
+"""Shared pytest fixtures (Redis container, client, URL, etc.)."""
 
 from __future__ import annotations
 
 import pytest
 import redis
 from testcontainers.redis import RedisContainer
+
+
+def _redis_url_from_container(redis_container: RedisContainer) -> str:
+    url = getattr(redis_container, "get_connection_url", None)
+    if callable(url):
+        return url()
+    host = redis_container.get_container_host_ip()
+    port = redis_container.get_exposed_port(6379)
+    return f"redis://{host}:{port}"
 
 
 @pytest.fixture(scope="session")
@@ -19,15 +28,15 @@ def redis_container() -> RedisContainer:
 
 
 @pytest.fixture
+def redis_url(redis_container: RedisContainer) -> str:
+    """Connection URL for the session Redis container (for core.RedisQueue, etc.)."""
+    return _redis_url_from_container(redis_container)
+
+
+@pytest.fixture
 def redis_client(redis_container: RedisContainer) -> redis.Redis[str]:
     """Return a Redis client connected to the session Redis container (decode_responses=True). Flushes DB after each test."""
-    url = getattr(redis_container, "get_connection_url", None)
-    if callable(url):
-        url = url()
-    else:
-        host = redis_container.get_container_host_ip()
-        port = redis_container.get_exposed_port(6379)
-        url = f"redis://{host}:{port}"
+    url = _redis_url_from_container(redis_container)
     client: redis.Redis[str] = redis.from_url(url, decode_responses=True)
     yield client
     client.flushdb()
