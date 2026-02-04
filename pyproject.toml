@@ -12,13 +12,14 @@ package = false
 [dependency-groups]
 dev = [
     "pytest>=9.0.2",
+    "redis>=5.0",
     "testcontainers>=4.14.1",
 ]
 
 [tool.uv.workspace]
 members = [
-  "shared/*", 
-  "components/*"
+  "shared/testing",
+  "components/*",
 ]
 
 [tool.pyrefly]

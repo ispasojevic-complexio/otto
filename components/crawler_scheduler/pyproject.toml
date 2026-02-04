@@ -11,9 +11,3 @@ dependencies = [
     "pyyaml>=6.0",
     "prometheus-client>=0.20",
 ]
-
-[dependency-groups]
-dev = [
-    "pytest>=9.0",
-    "testcontainers>=4.14",
-]

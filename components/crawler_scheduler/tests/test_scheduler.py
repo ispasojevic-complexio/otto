@@ -2,34 +2,9 @@
 
 import pytest
 import redis
-from testcontainers.redis import RedisContainer
 
 from config import SchedulerConfig
 from seeds import enqueue_seeds, load_seeds
-
-@pytest.fixture(scope="module")
-def redis_container() -> RedisContainer:
-    try:
-        container = RedisContainer("redis:7-alpine")
-        with container:
-            yield container
-    except Exception as e:
-        pytest.skip(f"Docker not available: {e}")
-
-
-@pytest.fixture
-def redis_client(redis_container: RedisContainer):
-    # Use decode_responses=True to match production (main.py uses it)
-    url = getattr(redis_container, "get_connection_url", None)
-    if url:
-        url = url()
-    else:
-        host = redis_container.get_container_host_ip()
-        port = redis_container.get_exposed_port(6379)
-        url = f"redis://{host}:{port}"
-    client = redis.from_url(url, decode_responses=True)
-    yield client
-    client.flushdb()
 
 
 @pytest.fixture
