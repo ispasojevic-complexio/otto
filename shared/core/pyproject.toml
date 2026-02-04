@@ -1,0 +1,8 @@
+[project]
+name = "otto-core"
+version = "0.1.0"
+description = "Common interfaces and implementations for Otto components (queue abstraction, Redis backend)"
+requires-python = ">=3.12"
+dependencies = [
+    "redis>=5.0",
+]

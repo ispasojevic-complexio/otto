@@ -12,12 +12,15 @@ package = false
 [dependency-groups]
 dev = [
     "pytest>=9.0.2",
-    "redis>=5.0",
     "testcontainers>=4.14.1",
 ]
 
+[tool.uv.sources]
+otto-core = { workspace = true }
+
 [tool.uv.workspace]
 members = [
+  "shared/core",
   "shared/testing",
   "components/*",
 ]
