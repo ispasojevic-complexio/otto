@@ -1,3 +1,3 @@
-"""Root conftest: load shared testing fixtures so all component tests can use them."""
+"""Root conftest: load shared core fixtures so all component tests can use them."""
 
-pytest_plugins = ["shared.testing.conftest"]
+pytest_plugins = ["shared.core.pytest_fixtures"]

@@ -10,4 +10,4 @@ for d in (_repo_root, _core_root):
     if str(d) not in sys.path:
         sys.path.insert(0, str(d))
 
-pytest_plugins = ["shared.testing.conftest"]
+pytest_plugins = ["shared.core.pytest_fixtures"]

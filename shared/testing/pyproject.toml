@@ -1,8 +1,0 @@
-[project]
-name = "otto-testing"
-version = "0.1.0"
-description = "Shared pytest fixtures and testing utilities for Otto monorepo"
-requires-python = ">=3.12"
-dependencies = [
-    "otto-core",
-]

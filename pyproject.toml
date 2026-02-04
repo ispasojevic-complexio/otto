@@ -21,7 +21,6 @@ otto-core = { workspace = true }
 [tool.uv.workspace]
 members = [
   "shared/core",
-  "shared/testing",
   "components/*",
 ]
 
