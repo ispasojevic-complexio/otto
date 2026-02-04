@@ -1,0 +1,18 @@
+[project]
+name = "otto"
+version = "0.1.0"
+requires-python = ">=3.12"
+dependencies = []
+
+[tool.uv]
+dev-dependencies = [
+    "pytest>=9.0.2",
+    "testcontainers>=4.14.1",
+]
+package = false
+
+[tool.uv.workspace]
+members = [
+  "shared/*", 
+  "components/*"
+]
