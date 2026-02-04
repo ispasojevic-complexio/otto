@@ -2,17 +2,27 @@
 name = "otto"
 version = "0.1.0"
 requires-python = ">=3.12"
-dependencies = []
+dependencies = [
+    "pyrefly>=0.51.0",
+]
 
 [tool.uv]
-dev-dependencies = [
+package = false
+
+[dependency-groups]
+dev = [
     "pytest>=9.0.2",
     "testcontainers>=4.14.1",
 ]
-package = false
 
 [tool.uv.workspace]
 members = [
   "shared/*", 
   "components/*"
+]
+
+[tool.pyrefly]
+project-includes = [
+    "**/*.py*",
+    "**/*.ipynb",
 ]
