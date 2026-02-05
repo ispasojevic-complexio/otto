@@ -53,4 +53,3 @@ class RedisQueue:
 
     def size(self) -> int:
         return self._client.llen(self._name)
-

@@ -16,13 +16,24 @@ class SchedulerConfig(BaseSettings):
         extra="ignore",
     )
 
-    redis_url: str = Field(default="redis://localhost:6379", description="Redis connection URL")
-    input_queue: str = Field(default="url_filter_output", description="Queue to consume URLs from")
-    output_queue: str = Field(default="crawler_queue", description="Queue to enqueue URLs to")
-    max_queue_size: int = Field(default=100_000, ge=1, description="Max length of output queue before backpressure")
+    redis_url: str = Field(
+        default="redis://localhost:6379", description="Redis connection URL"
+    )
+    input_queue: str = Field(
+        default="url_filter_output", description="Queue to consume URLs from"
+    )
+    output_queue: str = Field(
+        default="crawler_queue", description="Queue to enqueue URLs to"
+    )
+    max_queue_size: int = Field(
+        default=100_000,
+        ge=1,
+        description="Max length of output queue before backpressure",
+    )
     seed_file_path: Path = Field(
         default_factory=lambda: Path(__file__).parent.parent.parent / "seeds.yaml",
         description="Path to YAML file with seed URLs",
     )
-    poll_timeout_seconds: float = Field(default=5.0, gt=0, description="Dequeue blocking timeout in seconds")
-
+    poll_timeout_seconds: float = Field(
+        default=5.0, gt=0, description="Dequeue blocking timeout in seconds"
+    )

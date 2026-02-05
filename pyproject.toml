@@ -11,7 +11,9 @@ package = false
 
 [dependency-groups]
 dev = [
+    "pre-commit>=4.0",
     "pytest>=9.0.2",
+    "ruff>=0.8",
     "testcontainers>=4.14.1",
 ]
 
@@ -29,3 +31,10 @@ project-includes = [
     "**/*.py*",
     "**/*.ipynb",
 ]
+
+[tool.ruff]
+target-version = "py312"
+line-length = 88
+
+[tool.ruff.lint]
+select = ["I"]  # isort; add more rules as needed

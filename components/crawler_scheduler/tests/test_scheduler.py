@@ -2,7 +2,6 @@
 
 import pytest
 import redis
-
 from core.queue import RedisQueue
 from crawler_scheduler.config import SchedulerConfig
 from crawler_scheduler.seeds import enqueue_seeds, load_seeds
@@ -39,7 +38,14 @@ def test_enqueue_seeds_enqueues_until_full(
     config: SchedulerConfig,
 ) -> None:
     output_queue = RedisQueue(redis_url, config.output_queue)
-    seeds = ["https://a.com", "https://b.com", "https://c.com", "https://d.com", "https://e.com", "https://f.com"]
+    seeds = [
+        "https://a.com",
+        "https://b.com",
+        "https://c.com",
+        "https://d.com",
+        "https://e.com",
+        "https://f.com",
+    ]
     n = enqueue_seeds(output_queue, config.max_queue_size, seeds, log_fn=None)
     assert n == config.max_queue_size
     assert redis_client.llen(config.output_queue) == config.max_queue_size

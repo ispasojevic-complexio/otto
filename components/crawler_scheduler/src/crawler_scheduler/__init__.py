@@ -1,2 +1,1 @@
 """Crawler scheduler package."""
-

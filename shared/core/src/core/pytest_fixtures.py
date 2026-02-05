@@ -45,4 +45,3 @@ def redis_client(redis_container: RedisContainer) -> Generator[redis.Redis, None
     yield client
     # Be liberal about the client type; this is test-only code.
     getattr(client, "flushdb", lambda: None)()
-

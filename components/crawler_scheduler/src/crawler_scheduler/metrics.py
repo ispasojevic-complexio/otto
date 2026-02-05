@@ -18,4 +18,3 @@ scheduler_loop_lag_seconds = Gauge(
     "crawler_scheduler_loop_lag_seconds",
     "Seconds since last successful dequeue from url_filter_output",
 )
-

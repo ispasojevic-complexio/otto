@@ -8,6 +8,7 @@ import signal
 import time
 
 from core.queue import RedisQueue
+
 from crawler_scheduler.config import SchedulerConfig
 from crawler_scheduler.metrics import (
     crawler_queue_size,
@@ -52,7 +53,9 @@ def main() -> None:
             output_queue,
             config.max_queue_size,
             seeds,
-            log_fn=lambda msg, extra: _log(msg, **(extra if isinstance(extra, dict) else {"extra": extra})),
+            log_fn=lambda msg, extra: _log(
+                msg, **(extra if isinstance(extra, dict) else {"extra": extra})
+            ),
         )
         seed_urls_enqueued_total.inc(n)
         _log("Seeds enqueued", seed_count=len(seeds), enqueued=n)
@@ -70,7 +73,11 @@ def main() -> None:
             current_size = output_queue.size()
             crawler_queue_size.set(current_size)
             if current_size >= config.max_queue_size:
-                _log("Backpressure: output queue at max size, re-queuing to input", url=url, current=current_size)
+                _log(
+                    "Backpressure: output queue at max size, re-queuing to input",
+                    url=url,
+                    current=current_size,
+                )
                 input_queue.enqueue(url)
                 continue
             output_queue.enqueue(url)
@@ -86,4 +93,3 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
-

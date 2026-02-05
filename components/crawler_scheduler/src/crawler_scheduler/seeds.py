@@ -6,7 +6,6 @@ from pathlib import Path
 from typing import Callable
 
 import yaml
-
 from core.queue import Queue
 
 
@@ -50,4 +49,3 @@ def enqueue_seeds(
         if log_fn and enqueued <= 5:
             log_fn("Seed enqueued", {"url": url, "enqueued_so_far": enqueued})
     return enqueued
-
