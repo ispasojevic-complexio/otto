@@ -1,3 +1,18 @@
-# Initial seed URLs for crawling (polovniautomobili.com).
-# Enqueued once on scheduler startup.
-seeds: []
+# Initial seed URLs for local crawling.
+# Enqueued once on scheduler startup when running the scheduler locally.
+#
+# For production, you can either:
+# - Replace these with your real seed URLs, or
+# - Point `CRAWLER_SCHEDULER_SEED_FILE_PATH` at a different YAML file.
+
+seeds:
+  - https://example.com/
+  - https://example.com/about
+  - https://example.com/contact
+  - https://example.com/blog
+  - https://example.com/blog/page/1
+  - https://example.com/blog/page/2
+  - https://example.com/products
+  - https://example.com/products/widget-1
+  - https://example.com/products/widget-2
+  - https://example.com/pricing

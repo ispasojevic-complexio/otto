@@ -1,0 +1,29 @@
+version: "3.9"
+
+services:
+  redis:
+    image: redis:7-alpine
+    container_name: otto-redis-prod
+    command: ["redis-server", "--appendonly", "yes"]
+    volumes:
+      - redis-data-prod:/data
+
+  crawler_scheduler:
+    build:
+      context: .
+      dockerfile: components/crawler_scheduler/deploy/Dockerfile
+    container_name: otto-crawler-scheduler-prod
+    depends_on:
+      - redis
+    environment:
+      # In production you will typically override these via your orchestrator or
+      # by passing a different seed file as a volume/config map.
+      CRAWLER_SCHEDULER_REDIS_URL: redis://redis:6379
+      # Example: point at an externally managed seeds file inside the container.
+      # Mount your own file to /data/seeds.yaml and uncomment the line below:
+      # CRAWLER_SCHEDULER_SEED_FILE_PATH: /data/seeds.yaml
+    restart: unless-stopped
+
+volumes:
+  redis-data-prod:
+

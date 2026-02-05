@@ -1,0 +1,33 @@
+version: "3.9"
+
+services:
+  redis:
+    image: redis:7-alpine
+    container_name: otto-redis-local
+    ports:
+      - "6379:6379"
+    command: ["redis-server", "--appendonly", "yes"]
+    volumes:
+      - redis-data-local:/data
+
+  crawler_scheduler:
+    build:
+      context: .
+      dockerfile: components/crawler_scheduler/deploy/Dockerfile
+    container_name: otto-crawler-scheduler-local
+    depends_on:
+      - redis
+    environment:
+      # Point scheduler at the dockerised Redis instance
+      CRAWLER_SCHEDULER_REDIS_URL: redis://redis:6379
+      # Use defaults for queues and poll timeout; override here if needed
+      # CRAWLER_SCHEDULER_INPUT_QUEUE: url_filter_output
+      # CRAWLER_SCHEDULER_OUTPUT_QUEUE: crawler_queue
+      # CRAWLER_SCHEDULER_POLL_TIMEOUT_SECONDS: 5
+      # Use the local seeds file with 10 example URLs
+      CRAWLER_SCHEDULER_SEED_FILE_PATH: /app/components/crawler_scheduler/seeds.yaml
+    restart: unless-stopped
+
+volumes:
+  redis-data-local:
+

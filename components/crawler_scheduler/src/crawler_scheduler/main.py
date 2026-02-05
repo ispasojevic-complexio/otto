@@ -2,11 +2,11 @@
 
 from __future__ import annotations
 
-import json
 import logging
 import signal
 import time
 
+from core import get_default_logger
 from core.queue import RedisQueue
 
 from crawler_scheduler.config import SchedulerConfig
@@ -20,15 +20,7 @@ from crawler_scheduler.seeds import enqueue_seeds, load_seeds
 
 COMPONENT = "crawler_scheduler"
 _shutdown_requested = False
-
-
-def _log(message: str, **kwargs: object) -> None:
-    record = {
-        "component": COMPONENT,
-        "message": message,
-        **{k: v for k, v in kwargs.items()},
-    }
-    print(json.dumps(record), flush=True)
+_logger = get_default_logger(COMPONENT)
 
 
 def _request_shutdown(*args: object) -> None:
@@ -40,11 +32,28 @@ def main() -> None:
     logging.basicConfig(level=logging.INFO)
     config = SchedulerConfig()
 
+    _logger.log(
+        "Scheduler starting",
+        redis_url=config.redis_url,
+        input_queue=config.input_queue,
+        output_queue=config.output_queue,
+        max_queue_size=config.max_queue_size,
+        seed_file=str(config.seed_file_path),
+        poll_timeout_seconds=config.poll_timeout_seconds,
+    )
+
     signal.signal(signal.SIGINT, _request_shutdown)
     signal.signal(signal.SIGTERM, _request_shutdown)
 
     input_queue = RedisQueue(config.redis_url, config.input_queue)
     output_queue = RedisQueue(config.redis_url, config.output_queue)
+
+    _logger.log(
+        "Redis queues initialised",
+        redis_url=config.redis_url,
+        input_queue=config.input_queue,
+        output_queue=config.output_queue,
+    )
 
     # Seed ingestion (once on startup)
     seeds = load_seeds(config.seed_file_path)
@@ -53,14 +62,14 @@ def main() -> None:
             output_queue,
             config.max_queue_size,
             seeds,
-            log_fn=lambda msg, extra: _log(
+            log_fn=lambda msg, extra: _logger.log(
                 msg, **(extra if isinstance(extra, dict) else {"extra": extra})
             ),
         )
         seed_urls_enqueued_total.inc(n)
-        _log("Seeds enqueued", seed_count=len(seeds), enqueued=n)
+        _logger.log("Seeds enqueued", seed_count=len(seeds), enqueued=n)
     else:
-        _log("No seeds to enqueue", seed_file=str(config.seed_file_path))
+        _logger.log("No seeds to enqueue", seed_file=str(config.seed_file_path))
 
     # Scheduler loop: dequeue from input -> enqueue to output with backpressure
     last_success_at = time.monotonic()
@@ -73,7 +82,7 @@ def main() -> None:
             current_size = output_queue.size()
             crawler_queue_size.set(current_size)
             if current_size >= config.max_queue_size:
-                _log(
+                _logger.log(
                     "Backpressure: output queue at max size, re-queuing to input",
                     url=url,
                     current=current_size,
@@ -81,14 +90,19 @@ def main() -> None:
                 input_queue.enqueue(url)
                 continue
             output_queue.enqueue(url)
+            _logger.log(
+                "URL moved to crawler queue",
+                url=url,
+                output_queue_size=current_size + 1,
+            )
             urls_enqueued_total.inc(1)
             last_success_at = time.monotonic()
             scheduler_loop_lag_seconds.set(0)
         except Exception as e:  # noqa: BLE001
-            _log("Queue error", error=str(e))
+            _logger.log("Queue error", error=str(e))
             time.sleep(1)
 
-    _log("Shutting down")
+    _logger.log("Shutting down")
 
 
 if __name__ == "__main__":
