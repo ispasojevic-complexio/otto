@@ -2,9 +2,6 @@
 name = "otto"
 version = "0.1.0"
 requires-python = ">=3.12"
-dependencies = [
-    "pyrefly>=0.51.0",
-]
 
 [tool.uv]
 package = false
@@ -12,6 +9,7 @@ package = false
 [dependency-groups]
 dev = [
     "pre-commit>=4.0",
+    "pyrefly>=0.51.0",
     "pytest>=9.0.2",
     "ruff>=0.8",
     "testcontainers>=4.14.1",
@@ -31,6 +29,11 @@ project-includes = [
     "**/*.py*",
     "**/*.ipynb",
 ]
+[tool.pyrefly.errors]
+implicit-any = "error"
+unannotated-parameter = "error"
+unannotated-return = "error"
+missing-override-decorator = "error"
 
 [tool.ruff]
 target-version = "py312"

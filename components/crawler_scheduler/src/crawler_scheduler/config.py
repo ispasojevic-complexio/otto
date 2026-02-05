@@ -9,7 +9,7 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 class SchedulerConfig(BaseSettings):
     """Environment-driven scheduler settings."""
 
-    model_config = SettingsConfigDict(
+    model_config = SettingsConfigDict(  # pyrefly: ignore[missing-override-decorator]
         env_prefix="CRAWLER_SCHEDULER_",
         env_file=".env",
         env_file_encoding="utf-8",
