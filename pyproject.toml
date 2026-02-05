@@ -10,6 +10,7 @@ package = false
 dev = [
     "pre-commit>=4.0",
     "pyrefly>=0.51.0",
+    "pyright>=1.1.408",
     "pytest>=9.0.2",
     "ruff>=0.8",
     "testcontainers>=4.14.1",

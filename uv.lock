@@ -274,6 +274,7 @@ source = { virtual = "." }
 dev = [
     { name = "pre-commit" },
     { name = "pyrefly" },
+    { name = "pyright" },
     { name = "pytest" },
     { name = "ruff" },
     { name = "testcontainers" },
@@ -285,6 +286,7 @@ dev = [
 dev = [
     { name = "pre-commit", specifier = ">=4.0" },
     { name = "pyrefly", specifier = ">=0.51.0" },
+    { name = "pyright", specifier = ">=1.1.408" },
     { name = "pytest", specifier = ">=9.0.2" },
     { name = "ruff", specifier = ">=0.8" },
     { name = "testcontainers", specifier = ">=4.14.1" },
@@ -490,6 +492,19 @@ wheels = [
     { url = "https://files.pythonhosted.org/packages/78/cb/a4adec3f1fbe29b2da3b95c1dd1d0e618bfe5e55f7c2f6f11b02485eb6c5/pyrefly-0.51.0-py3-none-win32.whl", hash = "sha256:525e654aa50bc32bdfdd505dbc233b0cfab8ed2917a62b178c3156e2f80062c0", size = 10887003, upload-time = "2026-02-02T15:32:50.655Z" },
     { url = "https://files.pythonhosted.org/packages/40/42/270cfe9ec1bb9706813f1e978abec1428f13840486047136fe4f3479dd87/pyrefly-0.51.0-py3-none-win_amd64.whl", hash = "sha256:0aa2db0cbf9f1d8c77a98464d12bcae7bdcbdaad80098a0456abf51d6f2ee275", size = 11654264, upload-time = "2026-02-02T15:32:52.745Z" },
     { url = "https://files.pythonhosted.org/packages/2f/cc/84dd9579bb4f8af3cdb98a883ec89ba226e1675c79fe2ede3ba4b2f428c0/pyrefly-0.51.0-py3-none-win_arm64.whl", hash = "sha256:bc14eb4f273a5ec2be7318c70a8e5a50e2e9f7a42de3a7f73fb0cfdc7f6996d2", size = 11188662, upload-time = "2026-02-02T15:32:55.713Z" },
+]
+
+[[package]]
+name = "pyright"
+version = "1.1.408"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "nodeenv" },
+    { name = "typing-extensions" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/74/b2/5db700e52554b8f025faa9c3c624c59f1f6c8841ba81ab97641b54322f16/pyright-1.1.408.tar.gz", hash = "sha256:f28f2321f96852fa50b5829ea492f6adb0e6954568d1caa3f3af3a5f555eb684", size = 4400578, upload-time = "2026-01-08T08:07:38.795Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/0c/82/a2c93e32800940d9573fb28c346772a14778b84ba7524e691b324620ab89/pyright-1.1.408-py3-none-any.whl", hash = "sha256:090b32865f4fdb1e0e6cd82bf5618480d48eecd2eb2e70f960982a3d9a4c17c1", size = 6399144, upload-time = "2026-01-08T08:07:37.082Z" },
 ]
 
 [[package]]
