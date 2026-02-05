@@ -5,7 +5,7 @@ from pathlib import Path
 
 import pytest
 
-from seeds import load_seeds
+from crawler_scheduler.seeds import load_seeds
 
 
 def test_load_seeds_missing_file() -> None:

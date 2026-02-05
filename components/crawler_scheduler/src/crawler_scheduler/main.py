@@ -8,14 +8,14 @@ import signal
 import time
 
 from core.queue import RedisQueue
-from config import SchedulerConfig
-from metrics import (
+from crawler_scheduler.config import SchedulerConfig
+from crawler_scheduler.metrics import (
     crawler_queue_size,
     scheduler_loop_lag_seconds,
     seed_urls_enqueued_total,
     urls_enqueued_total,
 )
-from seeds import enqueue_seeds, load_seeds
+from crawler_scheduler.seeds import enqueue_seeds, load_seeds
 
 COMPONENT = "crawler_scheduler"
 _shutdown_requested = False
@@ -77,7 +77,7 @@ def main() -> None:
             urls_enqueued_total.inc(1)
             last_success_at = time.monotonic()
             scheduler_loop_lag_seconds.set(0)
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001
             _log("Queue error", error=str(e))
             time.sleep(1)
 
@@ -86,3 +86,4 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
+

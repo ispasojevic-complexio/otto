@@ -40,10 +40,14 @@ def enqueue_seeds(
     for url in seeds:
         if output_queue.size() >= max_size:
             if log_fn:
-                log_fn("Backpressure: output queue at max size, skipping remaining seeds", {"current": output_queue.size()})
+                log_fn(
+                    "Backpressure: output queue at max size, skipping remaining seeds",
+                    {"current": output_queue.size()},
+                )
             break
         output_queue.enqueue(url)
         enqueued += 1
         if log_fn and enqueued <= 5:
             log_fn("Seed enqueued", {"url": url, "enqueued_so_far": enqueued})
     return enqueued
+

@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from typing import Protocol, runtime_checkable
+from typing import Any, Protocol, runtime_checkable
 
 
 @runtime_checkable
@@ -33,7 +33,9 @@ class RedisQueue:
     def __init__(self, redis_url: str, name: str) -> None:
         import redis
 
-        self._client = redis.from_url(redis_url, decode_responses=True)
+        # Treat the Redis client as dynamically typed to avoid tight coupling
+        # to redis-py's stubs, which can vary across versions.
+        self._client: Any = redis.from_url(redis_url, decode_responses=True)
         self._name = name
 
     def enqueue(self, item: str) -> None:
@@ -51,3 +53,4 @@ class RedisQueue:
 
     def size(self) -> int:
         return self._client.llen(self._name)
+

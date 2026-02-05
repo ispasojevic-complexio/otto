@@ -3,9 +3,9 @@
 import pytest
 import redis
 
-from config import SchedulerConfig
 from core.queue import RedisQueue
-from seeds import enqueue_seeds, load_seeds
+from crawler_scheduler.config import SchedulerConfig
+from crawler_scheduler.seeds import enqueue_seeds, load_seeds
 
 
 @pytest.fixture
