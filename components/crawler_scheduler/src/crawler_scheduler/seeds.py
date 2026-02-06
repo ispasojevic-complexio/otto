@@ -24,7 +24,7 @@ def load_seeds(path: Path) -> list[str]:
     return [str(s).strip() for s in seeds if s and isinstance(s, str)]
 
 
-def enqueue_seeds(
+async def enqueue_seeds(
     output_queue: Queue,
     max_size: int,
     seeds: list[str],
@@ -37,14 +37,14 @@ def enqueue_seeds(
     """
     enqueued = 0
     for url in seeds:
-        if output_queue.size() >= max_size:
+        if await output_queue.size() >= max_size:
             if log_fn:
                 log_fn(
                     "Backpressure: output queue at max size, skipping remaining seeds",
-                    {"current": output_queue.size()},
+                    {"current": await output_queue.size()},
                 )
             break
-        output_queue.enqueue(url)
+        await output_queue.enqueue(url)
         enqueued += 1
         if log_fn and enqueued <= 5:
             log_fn("Seed enqueued", {"url": url, "enqueued_so_far": enqueued})

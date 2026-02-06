@@ -12,6 +12,7 @@ dev = [
     "pyrefly>=0.51.0",
     "pyright>=1.1.408",
     "pytest>=9.0.2",
+    "pytest-asyncio>=0.24",
     "ruff>=0.8",
     "testcontainers>=4.14.1",
 ]
@@ -35,6 +36,9 @@ implicit-any = "error"
 unannotated-parameter = "error"
 unannotated-return = "error"
 missing-override-decorator = "error"
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
 
 [tool.ruff]
 target-version = "py312"

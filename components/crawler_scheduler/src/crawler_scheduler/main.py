@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import asyncio
 import signal
 import time
 
@@ -27,24 +28,7 @@ def _request_shutdown(*args: object) -> None:
     _shutdown_requested = True
 
 
-def main() -> None:
-    config = SchedulerConfig()
-
-    _logger.info(
-        "Scheduler starting",
-        extra={
-            "redis_url": config.redis_url,
-            "input_queue": config.input_queue,
-            "output_queue": config.output_queue,
-            "max_queue_size": config.max_queue_size,
-            "seed_file": str(config.seed_file_path),
-            "poll_timeout_seconds": config.poll_timeout_seconds,
-        },
-    )
-
-    signal.signal(signal.SIGINT, _request_shutdown)
-    signal.signal(signal.SIGTERM, _request_shutdown)
-
+async def _run(config: SchedulerConfig) -> None:
     input_queue = RedisQueue(config.redis_url, config.input_queue)
     output_queue = RedisQueue(config.redis_url, config.output_queue)
 
@@ -60,7 +44,7 @@ def main() -> None:
     # Seed ingestion (once on startup)
     seeds = load_seeds(config.seed_file_path)
     if seeds:
-        n = enqueue_seeds(
+        n = await enqueue_seeds(
             output_queue,
             config.max_queue_size,
             seeds,
@@ -84,20 +68,20 @@ def main() -> None:
     last_success_at = time.monotonic()
     while not _shutdown_requested:
         try:
-            url = input_queue.dequeue(timeout_seconds=config.poll_timeout_seconds)
+            url = await input_queue.dequeue(timeout_seconds=config.poll_timeout_seconds)
             if url is None:
                 scheduler_loop_lag_seconds.set(time.monotonic() - last_success_at)
                 continue
-            current_size = output_queue.size()
+            current_size = await output_queue.size()
             crawler_queue_size.set(current_size)
             if current_size >= config.max_queue_size:
                 _logger.warning(
                     "Backpressure: output queue at max size, re-queuing to input",
                     extra={"url": url, "current": current_size},
                 )
-                input_queue.enqueue(url)
+                await input_queue.enqueue(url)
                 continue
-            output_queue.enqueue(url)
+            await output_queue.enqueue(url)
             _logger.info(
                 "URL moved to crawler queue",
                 extra={"url": url, "output_queue_size": current_size + 1},
@@ -105,11 +89,32 @@ def main() -> None:
             urls_enqueued_total.inc(1)
             last_success_at = time.monotonic()
             scheduler_loop_lag_seconds.set(0)
-        except Exception as e:  # noqa: BLE001
+        except Exception:  # noqa: BLE001
             _logger.exception("Queue error")
-            time.sleep(1)
+            await asyncio.sleep(1)
 
     _logger.info("Shutting down")
+
+
+def main() -> None:
+    config = SchedulerConfig()
+
+    _logger.info(
+        "Scheduler starting",
+        extra={
+            "redis_url": config.redis_url,
+            "input_queue": config.input_queue,
+            "output_queue": config.output_queue,
+            "max_queue_size": config.max_queue_size,
+            "seed_file": str(config.seed_file_path),
+            "poll_timeout_seconds": config.poll_timeout_seconds,
+        },
+    )
+
+    signal.signal(signal.SIGINT, _request_shutdown)
+    signal.signal(signal.SIGTERM, _request_shutdown)
+
+    asyncio.run(_run(config))
 
 
 if __name__ == "__main__":

@@ -1,5 +1,7 @@
-"""Core package: common interfaces and implementations (queue, logging, etc.)."""
+"""Core package: common interfaces and implementations (queue, cache, kafka, logging, etc.)."""
 
+from core.cache import Cache, RedisCache
+from core.kafka import AIOKafkaProducer, KafkaProducer
 from core.logging import (
     LogSink,
     PrintSink,
@@ -10,6 +12,10 @@ from core.logging import (
 from core.queue import Queue, RedisQueue
 
 __all__ = [
+    "Cache",
+    "RedisCache",
+    "KafkaProducer",
+    "AIOKafkaProducer",
     "Queue",
     "RedisQueue",
     "LogSink",

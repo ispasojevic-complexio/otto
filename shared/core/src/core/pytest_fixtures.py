@@ -1,12 +1,11 @@
-"""Shared pytest fixtures (Redis container, client, URL, etc.)."""
+"""Shared pytest fixtures (Redis container, async client, URL, etc.)."""
 
 from __future__ import annotations
 
-from collections.abc import Generator
+from collections.abc import AsyncGenerator, Generator
 from typing import Any
 
 import pytest
-import redis
 from testcontainers.redis import RedisContainer
 
 
@@ -38,10 +37,14 @@ def redis_url(redis_container: RedisContainer) -> str:
 
 
 @pytest.fixture
-def redis_client(redis_container: RedisContainer) -> Generator[redis.Redis, None, None]:
-    """Return a Redis client connected to the session Redis container (decode_responses=True). Flushes DB after each test."""
+async def redis_client(
+    redis_container: RedisContainer,
+) -> AsyncGenerator[Any, None]:
+    """Async Redis client (decode_responses=True). Flushes DB after each test."""
+    from redis.asyncio import Redis
+
     url = _redis_url_from_container(redis_container)
-    client: redis.Redis = redis.from_url(url, decode_responses=True)
+    client = Redis.from_url(url, decode_responses=True)
     yield client
-    # Be liberal about the client type; this is test-only code.
-    getattr(client, "flushdb", lambda: None)()
+    await client.flushdb()
+    await client.aclose()
